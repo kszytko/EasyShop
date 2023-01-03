@@ -1,0 +1,14 @@
+{
+    "products": [
+        {
+            "name": "Chleb",
+            "price": 450,
+            "weight": 0.5
+        },
+        {
+            "name": "Piwo",
+            "price": 350,
+            "weight": 0.5
+        }
+    ]
+}

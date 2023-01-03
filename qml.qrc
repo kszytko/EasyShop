@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ListScreen.qml</file>
+        <file>BasketScreen.qml</file>
+        <file>SettingsScreen.qml</file>
+        <file>data.json</file>
+        <file>basket.png</file>
+        <file>list.png</file>
+        <file>options.png</file>
+        <file>NewToolSeparator.qml</file>
+    </qresource>
+    <qresource prefix="/UI/images"/>
+    <qresource prefix="/view"/>
+    <qresource prefix="/model"/>
+</RCC>
