@@ -11,7 +11,7 @@ Rectangle {
     id: listview
     anchors.fill: parent
 
-    model: 6
+    model: shopModel
 
     //    delegate: Rectangle {
     //      width: parent.width
@@ -43,14 +43,16 @@ Rectangle {
           //color: "#fff"
           //background: Item {}
           // render data from model
-          text: "TEST" //model.content
+          text: "Name:   " + model.name + "\n" + "Price:  " + model.price + "\n"
+                + "Weight: " + model.weight
+
           Layout.fillWidth: true
         }
 
         RoundButton {
           text: "ADD" //"\u2796" // unicode heavy minus sign
           // remove this element from model
-          onClicked: todoModel.remove(model.index)
+          onClicked: shopController.addToBasket(model.index)
           height: parent.height
         }
       }

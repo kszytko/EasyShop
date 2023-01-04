@@ -6,9 +6,10 @@ QT += quick
 
 SOURCES += \
         basketmodel.cpp \
-        jsonparser.cpp \
+        filehandler.cpp \
         main.cpp \
         networkhandler.cpp \
+        parser.cpp \
         product.cpp \
         shopcontroller.cpp \
         shopmodel.cpp
@@ -28,8 +29,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     basketmodel.h \
-    jsonparser.h \
+    filehandler.h \
     networkhandler.h \
+    parser.h \
     product.h \
     shopcontroller.h \
     shopmodel.h

@@ -10,28 +10,26 @@ class NetworkHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetworkHandler(QString dataEndpoint_, QObject *parent = nullptr);
+    explicit NetworkHandler(QString endpoint, QObject *parent = nullptr);
     ~NetworkHandler();
 
     void downloadData();
-    QJsonDocument getParsedJson();
+    QByteArray getData();
 
 public slots:
     void networkReplyReadyRead();
 
 signals:
-    void dataParsed();
+    void finished();
 
 private:
     void performGET(const QString & url);
-    void parseResponse(const QByteArray & response);
-
-    QJsonDocument m_parsedReply;
 
     std::unique_ptr<QNetworkAccessManager> m_networkAccessManager;
     std::shared_ptr<QNetworkReply> m_networkReply;
 
-    QString dataEndpoint{};
+    QString m_endpoint;
+    QByteArray m_response;
 };
 
 #endif // NETWORKHANDLER_H

@@ -2,33 +2,33 @@
 #define SHOPCONTROLLER_H
 
 #include <QObject>
-#include <QList>
-#include "product.h"
 
-#include <QJsonArray>
-#include <QJsonDocument>
 #include "networkhandler.h"
+#include "filehandler.h"
 
-
-#include <memory>
+#include "shopmodel.h"
 
 
 class ShopController : public QObject
 {
     Q_OBJECT
+
 public:
     explicit ShopController(QObject *parent = nullptr);
+    ShopController(QString fileName, QObject *parent = nullptr);
 
-private:
-    void readProducList(QJsonDocument json);
+    Q_INVOKABLE void addToBasket(int index);
+    ShopModel * getShopModel();
 
 private slots:
-    void downloadJson();
+    void populateModel();
 
 private:
-    QList<std::shared_ptr<Product>> productList;
+    NetworkHandler * m_networkHandler;
+    FileHandler * m_fileHandler;
 
-    std::shared_ptr<NetworkHandler> networkHandler;
+    ShopModel * m_shopModel;
+
 
 };
 #endif // SHOPCONTROLLER_H

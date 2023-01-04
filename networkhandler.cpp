@@ -1,8 +1,8 @@
 #include "networkhandler.h"
 
 
-NetworkHandler::NetworkHandler(QString dataEndpoint_, QObject *parent)
-    : QObject{parent}, dataEndpoint(dataEndpoint_)
+NetworkHandler::NetworkHandler(QString endpoint, QObject *parent)
+    : QObject{parent}, m_endpoint(endpoint)
 {
     m_networkAccessManager = std::make_unique<QNetworkAccessManager>( this );
 }
@@ -15,15 +15,13 @@ NetworkHandler::~NetworkHandler()
 
 void NetworkHandler::downloadData()
 {
-    performGET(dataEndpoint);
+    performGET(m_endpoint);
 }
 
-QJsonDocument NetworkHandler::getParsedJson()
+QByteArray NetworkHandler::getData()
 {
-    return m_parsedReply;
+    return m_response;
 }
-
-
 
 void NetworkHandler::performGET(const QString &url)
 {
@@ -31,9 +29,7 @@ void NetworkHandler::performGET(const QString &url)
     request.setHeader( QNetworkRequest::ContentTypeHeader, QString( "application/json"));
     m_networkReply = std::shared_ptr<QNetworkReply>(m_networkAccessManager->get(request));
     connect(m_networkReply.get(), &QNetworkReply::finished, this, &NetworkHandler::networkReplyReadyRead);
-
 }
-
 
 void NetworkHandler::networkReplyReadyRead()
 {
@@ -41,16 +37,10 @@ void NetworkHandler::networkReplyReadyRead()
         return;
     }
 
-    QByteArray response = m_networkReply->readAll();
+    m_response = m_networkReply->readAll();
     m_networkReply->deleteLater();
 
-    parseResponse(response);
-
+    emit finished();
 }
-void NetworkHandler::parseResponse(const QByteArray &response)
-{
-    m_parsedReply = QJsonDocument::fromJson(response);
 
-    emit dataParsed();
-}
 

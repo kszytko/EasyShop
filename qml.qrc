@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>ListScreen.qml</file>
+        <file>ShopScreen.qml</file>
         <file>BasketScreen.qml</file>
         <file>SettingsScreen.qml</file>
         <file>data.json</file>

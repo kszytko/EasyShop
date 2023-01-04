@@ -12,9 +12,11 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    auto shopController = std::make_unique<ShopController>();
+    //auto shopController = std::make_unique<ShopController>();
+    ShopController controller(":/data.json");
 
-    engine.rootContext()->setContextProperty("shopController", shopController.get());
+    engine.rootContext()->setContextProperty("shopController", &controller);
+    engine.rootContext()->setContextProperty("shopModel", controller.getShopModel());
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

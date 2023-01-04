@@ -2,21 +2,29 @@
 #define SHOPMODEL_H
 
 #include <QAbstractListModel>
+#include "product.h"
 
-class shopModel : public QAbstractListModel
+class ShopModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit shopModel(QObject *parent = nullptr);
+    enum AnimalRoles {
+        NameRole = Qt::UserRole + 1,
+        PriceRole,
+        WeightRole
+    };
 
-signals:
+    explicit ShopModel(QObject *parent = nullptr);
 
-
-    // QAbstractItemModel interface
-public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
+
+    void populate(const QProductList & products);
+
+private:
+    QProductList m_products;
+
 };
 
 #endif // SHOPMODEL_H

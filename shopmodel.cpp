@@ -1,31 +1,48 @@
 #include "shopmodel.h"
 
-shopModel::shopModel(QObject *parent)
+ShopModel::ShopModel(QObject *parent)
     : QAbstractListModel{parent}
 {
 
 }
 
-int shopModel::rowCount(const QModelIndex &parent) const
+int ShopModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
+
+    return m_products.count();
 }
 
-QVariant shopModel::data(const QModelIndex &index, int role) const
+QVariant ShopModel::data(const QModelIndex &index, int role) const
 {
+    if(!index.isValid())
+        return QVariant();
+
+    switch(role){
+    case NameRole:
+        return m_products[index.row()].name();
+
+    case PriceRole:
+        return m_products[index.row()].price();
+
+    case WeightRole:
+        return m_products[index.row()].weight();
+
+    default:
+        return QVariant();
+    }
 }
 
-QHash<int, QByteArray> shopModel::roleNames() const
+QHash<int, QByteArray> ShopModel::roleNames() const
 {
+        QHash<int, QByteArray> roles;
+        roles[NameRole] = "name";
+        roles[PriceRole] = "price";
+        roles[WeightRole] = "weight";
+        return roles;
 }
 
-int shopModel::rowCount(const QModelIndex &parent) const
+void ShopModel::populate(const QProductList & products)
 {
-}
-
-QVariant shopModel::data(const QModelIndex &index, int role) const
-{
-}
-
-QHash<int, QByteArray> shopModel::roleNames() const
-{
+    m_products = products;
 }

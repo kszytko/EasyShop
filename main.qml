@@ -17,7 +17,7 @@ ApplicationWindow {
       ToolButton {
         text: qsTr("Lista produktów")
         icon.source: "qrc:/list.png"
-        onClicked: pageLoader.source = "ListScreen.qml"
+        onClicked: pageLoader.source = "ShopScreen.qml"
       }
 
       NewToolSeparator {}
@@ -47,7 +47,7 @@ ApplicationWindow {
     Loader {
       id: pageLoader
       anchors.fill: parent
-      source: "./ListScreen.qml"
+      source: "./ShopScreen.qml"
     }
   }
 }
