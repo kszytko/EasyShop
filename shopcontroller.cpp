@@ -18,8 +18,10 @@ ShopController::ShopController(QString fileName, QObject *parent)
     qDebug() << "start here";
     m_shopModel = new ShopModel();
     m_fileHandler = new FileHandler(fileName);
+
+    connect(m_fileHandler, &FileHandler::finished, this, &ShopController::populateModel);
+
     m_fileHandler->downloadData();
-    qDebug() << connect(m_fileHandler, &FileHandler::finished, this, &ShopController::populateModel);
 }
 
 void ShopController::addToBasket(int index)
