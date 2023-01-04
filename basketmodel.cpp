@@ -1,16 +1,35 @@
 #include "basketmodel.h"
 
-basketModel::basketModel(QObject *parent)
+BasketModel::BasketModel(QObject *parent)
     : QAbstractListModel{parent}
 {
 
 }
 
 
-int basketModel::rowCount(const QModelIndex &parent) const
+int BasketModel::rowCount(const QModelIndex &parent) const
 {
+    return m_productCount.size();
 }
 
-QVariant basketModel::data(const QModelIndex &index, int role) const
+QVariant BasketModel::data(const QModelIndex &index, int role) const
 {
+    if(!index.isValid())
+        return QVariant();
+
+    switch(role){
+
+    default:
+        return QVariant();
+    }
+}
+
+void BasketModel::add(const Product * product)
+{
+    ++m_productCount[product];
+}
+S
+void BasketModel::remove(const Product * product)
+{
+    m_productCount.remove(product);
 }

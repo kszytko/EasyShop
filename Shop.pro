@@ -29,6 +29,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     basketmodel.h \
+    datahandler.h \
     filehandler.h \
     networkhandler.h \
     parser.h \
