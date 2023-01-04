@@ -21,7 +21,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void populate(const QProductList & products);
-    const Product & getProduct(qsizetype index);
+    Product * getProduct(qsizetype index);
 
 private:
     QProductList m_products;

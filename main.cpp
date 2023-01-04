@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("shopController", &controller);
     engine.rootContext()->setContextProperty("shopModel", controller.getShopModel());
+    engine.rootContext()->setContextProperty("basketModel", controller.getBasketModel());
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

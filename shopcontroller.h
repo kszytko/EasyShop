@@ -17,7 +17,11 @@ public:
 
     Q_INVOKABLE void addToBasket(qsizetype index);
     Q_INVOKABLE void removeFromBasket(qsizetype index);
+    Q_INVOKABLE int getFullPrice();
+    Q_INVOKABLE void buy();
+
     ShopModel * getShopModel();
+    BasketModel * getBasketModel();
 
 private slots:
     void populateModel();

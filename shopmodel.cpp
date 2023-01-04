@@ -47,7 +47,7 @@ void ShopModel::populate(const QProductList & products)
     m_products = products;
 }
 
-const Product * ShopModel::getProduct(qsizetype index)
+Product * ShopModel::getProduct(qsizetype index)
 {
     return &m_products[index];
 }

@@ -13,24 +13,6 @@ Rectangle {
 
     model: shopModel
 
-    //    delegate: Rectangle {
-    //      width: parent.width
-    //      height: 45
-
-    //      border.color: "grey"
-    //      border.width: 2
-    //      radius: 2
-
-    //      Text {
-    //        anchors.centerIn: parent
-    //        text: "Poszła" + "\n" + "ola"
-    //      }
-
-    //      Button {
-    //        anchors.right: parent.right
-    //        text: qsTr("Dodaj")
-    //      }
-    //    }
     delegate: ColumnLayout {
       width: listview.width
       height: 55
