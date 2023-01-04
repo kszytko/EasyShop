@@ -3,7 +3,7 @@
 #include <QDebug>
 
 FileHandler::FileHandler(QString fileName, QObject *parent)
-    : QObject{parent}, m_fileName(fileName)
+    : DataHandler{parent}, m_fileName(fileName)
 {
     qDebug() << "Loading " << fileName;
 }

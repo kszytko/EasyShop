@@ -2,7 +2,7 @@
 
 
 NetworkHandler::NetworkHandler(QString endpoint, QObject *parent)
-    : QObject{parent}, m_endpoint(endpoint)
+    : DataHandler{parent}, m_endpoint(endpoint)
 {
     m_networkAccessManager = std::make_unique<QNetworkAccessManager>( this );
 }

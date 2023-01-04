@@ -3,6 +3,8 @@
 #include <QQmlContext>
 
 #include "shopcontroller.h"
+#include "networkhandler.h"
+#include "filehandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,8 +14,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    //auto shopController = std::make_unique<ShopController>();
-    ShopController controller(":/data.json");
+    NetworkHandler networkHandler("http://127.0.0.1:5000/getProducts");
+    FileHandler fileHandler(":/data.json");
+
+    ShopController controller(&fileHandler);
 
     engine.rootContext()->setContextProperty("shopController", &controller);
     engine.rootContext()->setContextProperty("shopModel", controller.getShopModel());

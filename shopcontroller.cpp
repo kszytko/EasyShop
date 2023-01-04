@@ -3,31 +3,25 @@
 
 #include <QDebug>
 
-ShopController::ShopController(QObject *parent)
-    : QObject{parent}
+ShopController::ShopController(DataHandler * handler, QObject *parent)
+    : QObject{parent}, m_dataHandler(handler)
 {
+    qDebug() << connect(m_dataHandler, &DataHandler::finished, this, &ShopController::populateModel);
+
     m_shopModel = new ShopModel();
-    m_networkHandler = new NetworkHandler("http://127.0.0.1:5000/getProducts");
-    m_networkHandler->downloadData();
-    connect(m_networkHandler, &NetworkHandler::finished, this, &ShopController::populateModel);
+    m_dataHandler->downloadData();
 }
 
-ShopController::ShopController(QString fileName, QObject *parent)
-    : QObject{parent}
+void ShopController::addToBasket(qsizetype index)
 {
-    qDebug() << "start here";
-    m_shopModel = new ShopModel();
-    m_fileHandler = new FileHandler(fileName);
-
-    connect(m_fileHandler, &FileHandler::finished, this, &ShopController::populateModel);
-
-    m_fileHandler->downloadData();
-}
-
-void ShopController::addToBasket(int index)
-{
-    //basketModel->append(shopModel.getProduct(index));
+    m_basketModel->add(m_shopModel->getProduct(index));
     qDebug() << "Adding: " << index;
+}
+
+void ShopController::removeFromBasket(qsizetype index)
+{
+    m_basketModel->remove(m_shopModel->getProduct(index));
+    qDebug() << "Removed: " << index;
 }
 
 ShopModel *ShopController::getShopModel(){
@@ -36,9 +30,7 @@ ShopModel *ShopController::getShopModel(){
 
 void ShopController::populateModel()
 {
-    qDebug() << "Read: ";
-    //Parser parser(m_networkHandler->getData());
-    Parser parser(m_fileHandler->getData());
+    Parser parser(m_dataHandler->getData());
     m_shopModel->populate(parser.getProducts());
 }
 

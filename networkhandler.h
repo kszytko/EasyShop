@@ -6,21 +6,20 @@
 #include <QNetworkReply>
 #include <QJsonDocument>
 
-class NetworkHandler : public QObject
+#include "datahandler.h"
+
+class NetworkHandler : public DataHandler
 {
     Q_OBJECT
 public:
     explicit NetworkHandler(QString endpoint, QObject *parent = nullptr);
-    ~NetworkHandler();
+    ~NetworkHandler() override;
 
-    void downloadData();
-    QByteArray getData();
+    void downloadData() override;
+    QByteArray getData() override;
 
 public slots:
     void networkReplyReadyRead();
-
-signals:
-    void finished();
 
 private:
     void performGET(const QString & url);

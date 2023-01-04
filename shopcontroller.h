@@ -3,10 +3,9 @@
 
 #include <QObject>
 
-#include "networkhandler.h"
-#include "filehandler.h"
-
+#include "datahandler.h"
 #include "shopmodel.h"
+#include "basketmodel.h"
 
 
 class ShopController : public QObject
@@ -14,21 +13,18 @@ class ShopController : public QObject
     Q_OBJECT
 
 public:
-    explicit ShopController(QObject *parent = nullptr);
-    ShopController(QString fileName, QObject *parent = nullptr);
+    explicit ShopController(DataHandler * handler, QObject *parent = nullptr);
 
-    Q_INVOKABLE void addToBasket(int index);
+    Q_INVOKABLE void addToBasket(qsizetype index);
+    Q_INVOKABLE void removeFromBasket(qsizetype index);
     ShopModel * getShopModel();
 
 private slots:
     void populateModel();
 
 private:
-    NetworkHandler * m_networkHandler;
-    FileHandler * m_fileHandler;
-
+    DataHandler * m_dataHandler;
     ShopModel * m_shopModel;
-
-
+    BasketModel * m_basketModel;
 };
 #endif // SHOPCONTROLLER_H
