@@ -6,12 +6,11 @@
 ShopController::ShopController(DataHandler * handler, QObject *parent)
     : QObject{parent}, m_dataHandler(handler)
 {
-    qDebug() << connect(m_dataHandler, &DataHandler::finished, this, &ShopController::populateModel);
-
     m_shopModel = new ShopModel();
     m_basketModel = new BasketModel();
 
-    m_dataHandler->downloadData();
+    qDebug() << connect(m_dataHandler, &DataHandler::finishedGET, this, &ShopController::readProducts);
+    qDebug() << connect(m_dataHandler, &DataHandler::finishedPOST, this, &ShopController::readOrder);
 }
 
 void ShopController::addToBasket(qsizetype index)
@@ -28,18 +27,11 @@ void ShopController::removeFromBasket(qsizetype index)
     qDebug() << "Removed: " << index;
 }
 
-int ShopController::getFullPrice()
-{
-    return m_basketModel->getFullPrice();
-}
-
 void ShopController::buy()
 {
     qDebug() << "BUY ALL";
 
-    //connect();
-    //connect();
-    m_basketModel->clear();
+    m_dataHandler->postOrder(m_basketModel->totalPrice());
 }
 
 ShopModel *ShopController::getShopModel(){
@@ -51,9 +43,48 @@ BasketModel *ShopController::getBasketModel()
     return m_basketModel;
 }
 
-void ShopController::populateModel()
+void ShopController::readProducts()
 {
-    Parser parser(m_dataHandler->getData());
+    qDebug() << "ReadProducts";
+    Parser parser(m_dataHandler->getResult());
     m_shopModel->populate(parser.getProducts());
 }
 
+void ShopController::readOrder()
+{
+    qDebug() << "ReadOrder";
+    auto result = m_dataHandler->getResult();
+    if(!result.isEmpty()){
+        setOrderPrice(result.toInt());
+        m_basketModel->clear();
+    } else {
+        setOrderPrice(0);
+    }
+}
+
+
+int ShopController::orderPrice() const
+{
+    return m_orderPrice;
+}
+
+void ShopController::setOrderPrice(int newOrderPrice)
+{
+    if (m_orderPrice == newOrderPrice)
+        return;
+    m_orderPrice = newOrderPrice;
+    emit orderPriceChanged();
+}
+
+QString ShopController::adress() const
+{
+    return m_adress;
+}
+
+void ShopController::setAdress(const QString &newAdress)
+{
+    if (m_adress == newAdress)
+        return;
+    m_adress = newAdress;
+    emit adressChanged();
+}

@@ -9,6 +9,41 @@
             "name": "Piwo",
             "price": 350,
             "weight": 0.5
+        },
+        {
+            "name": "Mleko",
+            "price": 200,
+            "weight": 1.0
+        },
+        {
+            "name": "Woda",
+            "price": 250,
+            "weight": 1.0
+        },
+        {
+            "name": "Jogurt",
+            "price": 635,
+            "weight": 0.35
+        },
+        {
+            "name": "Kasza",
+            "price": 400,
+            "weight": 0.5
+        },
+        {
+            "name": "Ryż",
+            "price": 380,
+            "weight": 0.5
+        },
+        {
+            "name": "Masło",
+            "price": 1000,
+            "weight": 0.25
+        },
+        {
+            "name": "Sok",
+            "price": 635,
+            "weight": 0.35
         }
     ]
 }

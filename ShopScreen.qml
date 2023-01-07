@@ -22,20 +22,18 @@ Rectangle {
         spacing: 15
 
         Text {
-          //color: "#fff"
-          //background: Item {}
-          // render data from model
-          text: "Name:   " + model.name + "\n" + "Price:  " + model.price + "\n"
-                + "Weight: " + model.weight
+          text: model.name + "\n" + model.weight.toFixed(2) + "kg\n" + Number(
+                  model.price / 100).toLocaleCurrencyString(Qt.locale("pl_PL"))
 
           Layout.fillWidth: true
         }
 
         RoundButton {
-          text: "ADD" //"\u2796" // unicode heavy minus sign
-          // remove this element from model
-          onClicked: shopController.addToBasket(model.index)
-          height: parent.height
+          text: "\u2795"
+          Layout.rightMargin: 10
+          onClicked: {
+            shopController.addToBasket(model.index)
+          }
         }
       }
       Rectangle {

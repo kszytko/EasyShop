@@ -10,11 +10,13 @@ public:
     explicit DataHandler(QObject *parent = nullptr) : QObject{parent}{};
     virtual ~DataHandler(){};
 
-    virtual void downloadData() = 0;
-    virtual QByteArray getData() = 0;
+    virtual void getProducts() = 0;
+    virtual void postOrder(int totalPrice) = 0;
+    virtual QByteArray getResult() = 0;
 
 signals:
-    void finished();
+    void finishedGET();
+    void finishedPOST();
 };
 
 #endif // DATAHANDLER_H

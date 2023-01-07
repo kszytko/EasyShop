@@ -44,7 +44,9 @@ QHash<int, QByteArray> ShopModel::roleNames() const
 
 void ShopModel::populate(const QProductList & products)
 {
+    beginInsertRows(QModelIndex(), 0, products.size());
     m_products = products;
+    endInsertRows();
 }
 
 Product * ShopModel::getProduct(qsizetype index)

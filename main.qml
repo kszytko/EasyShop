@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
 ApplicationWindow {
+  id: root
   width: 450
   height: 480
   visible: true
@@ -23,6 +24,7 @@ ApplicationWindow {
       NewToolSeparator {}
 
       ToolButton {
+        id: basketToolButton
         text: qsTr("Koszyk zakupów")
         icon.source: "qrc:/basket.png"
         onClicked: pageLoader.source = "BasketScreen.qml"

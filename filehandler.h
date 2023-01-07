@@ -11,11 +11,14 @@ public:
     explicit FileHandler(QString fileName, QObject *parent = nullptr);
     ~FileHandler();
 
-    void downloadData() override;
-    QByteArray getData() override;
+    void getProducts() override;
+    void postOrder(int  totalPrice) override;
+
+    QByteArray getResult() override;
 
 private:
     QString m_fileName;
     QByteArray m_data;
+
 };
 #endif // FILEHANDLER_H

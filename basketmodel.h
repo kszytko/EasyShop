@@ -9,6 +9,8 @@
 class BasketModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int totalPrice READ totalPrice NOTIFY totalPriceChanged);
+
 public:
     enum ModelRoles {
         NameRole = Qt::UserRole + 1,
@@ -26,15 +28,19 @@ public:
     void remove(qsizetype index);
     void clear();
 
-    int getFullPrice();
+    void calculateTotalPrice();
+    int totalPrice() const;
+
+signals:
+    void totalPriceChanged();
 
 private:
     Product * getProduct(int index) const;
     int getAmount(int index) const;
 
 private:
-    QMap<Product *, int> m_productCount{};
-
+    QMap<Product *, int> m_productMap{};
+    int m_totalPrice{0};
 };
 
 #endif // BASKETMODEL_H

@@ -11,7 +11,7 @@ int BasketModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    return m_productCount.size();
+    return m_productMap.size();
 }
 
 QVariant BasketModel::data(const QModelIndex &index, int role) const
@@ -33,50 +33,54 @@ QVariant BasketModel::data(const QModelIndex &index, int role) const
 
 void BasketModel::add(Product * product)
 {
-    ++m_productCount[product];
+    ++m_productMap[product];
+    calculateTotalPrice();
 }
 
 void BasketModel::remove(qsizetype index)
 {
     beginRemoveRows(QModelIndex(),index, index);
 
-    auto product = m_productCount.keys().at(index);
-    m_productCount.remove(product);
+    auto product = m_productMap.keys().at(index);
+    m_productMap.remove(product);
+    calculateTotalPrice();
 
     endRemoveRows();
 }
 
 void BasketModel::clear()
 {
-    beginRemoveRows(QModelIndex(),0, m_productCount.size());
+    beginRemoveRows(QModelIndex(),0, m_productMap.size());
 
-    m_productCount.clear();
+    m_productMap.clear();
+    calculateTotalPrice();
 
     endRemoveRows();
 }
 
-int BasketModel::getFullPrice()
+void BasketModel::calculateTotalPrice()
 {
     int sum = 0;
 
-    QMapIterator<Product *, int> i(m_productCount);
+    QMapIterator<Product *, int> i(m_productMap);
     while (i.hasNext()) {
         i.next();
 
         sum += i.key()->price() * i.value();
     }
 
-    return sum;
+   m_totalPrice = sum;
+   emit totalPriceChanged();
 }
 
 Product * BasketModel::getProduct(int index) const
 {
-    return m_productCount.keys().at(index);
+    return m_productMap.keys().at(index);
 }
 
 int BasketModel::getAmount(int index) const
 {
-    return m_productCount.values().at(index);
+    return m_productMap.values().at(index);
 }
 
 
@@ -87,4 +91,9 @@ QHash<int, QByteArray> BasketModel::roleNames() const
         roles[PriceRole] = "price";
         roles[AmountRole] = "amount";
         return roles;
+}
+
+int BasketModel::totalPrice() const
+{
+    return m_totalPrice;
 }

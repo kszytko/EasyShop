@@ -13,7 +13,14 @@ FileHandler::~FileHandler()
 
 }
 
-void FileHandler::downloadData()
+QByteArray FileHandler::getResult()
+{
+    qDebug() << "Data";
+    return m_data;
+}
+
+
+void FileHandler::getProducts()
 {
     qDebug() << "Reading file";
 
@@ -28,11 +35,13 @@ void FileHandler::downloadData()
 
     qDebug() << "Reading finished";
 
-    emit finished();
+    emit finishedGET();
 }
 
-QByteArray FileHandler::getData()
+void FileHandler::postOrder(int totalPrice)
 {
-    qDebug() << "Data";
-    return m_data;
+    int value = totalPrice * 1.23;
+    m_data = QString::number(value).toUtf8();
+
+    emit finishedPOST();
 }

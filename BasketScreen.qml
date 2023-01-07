@@ -49,7 +49,6 @@ Rectangle {
           text: "DELETE"
           onClicked: {
             shopController.removeFromBasket(model.index)
-            fullPriceText.text = shopController.getFullPrice()
           }
           height: parent.height
         }
@@ -98,24 +97,72 @@ Rectangle {
   }
 
   RowLayout {
+    id: footerTotal
     anchors.bottom: parent.bottom
     width: parent.width
-    spacing: 50
+    height: 50
 
     Text {
       id: fullPriceText
-      text: shopController.getFullPrice()
-      Layout.margins: 40
+      text: qsTr("Total price: %1").arg(
+              Number(basketModel.totalPrice / 100).toLocaleCurrencyString(
+                Qt.locale("pl_PL")))
+      Layout.alignment: Qt.AlignCenter
     }
 
     RoundButton {
       text: "BUY"
+      implicitWidth: 100
+      Layout.alignment: Qt.AlignCenter
+
       onClicked: {
         shopController.buy()
-        fullPriceText.text = shopController.getFullPrice()
+        popup.open()
       }
-      height: parent.height
-      Layout.margins: 40
+    }
+  }
+
+  Popup {
+    id: popup
+    anchors.centerIn: parent
+
+    width: 200
+    height: 200
+
+    modal: true
+    focus: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+    background: Rectangle {
+      anchors.fill: parent
+      radius: 10
+      border.width: 1
+      border.color: "lightgrey"
+    }
+
+    ColumnLayout {
+      anchors.fill: parent
+      spacing: 10
+
+      Text {
+        text: "ORDER"
+        Layout.alignment: Qt.AlignHCenter
+      }
+
+      Text {
+        text: shopController.orderPrice === 0 ? "Error" : Number(
+                                                  shopController.orderPrice
+                                                  / 100).toLocaleCurrencyString(
+                                                  Qt.locale("pl_PL"))
+        Layout.alignment: Qt.AlignHCenter
+      }
+
+      RoundButton {
+        text: "Close"
+        Layout.alignment: Qt.AlignHCenter
+        implicitWidth: 100
+        onClicked: popup.close()
+      }
     }
   }
 }

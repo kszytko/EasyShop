@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    NetworkHandler networkHandler("http://127.0.0.1:5000/getProducts");
-    FileHandler fileHandler(":/data.json");
+    NetworkHandler networkHandler("127.0.0.1:5000", "/getProducts", "/order");
+    //FileHandler fileHandler(":/data.json");
 
-    ShopController controller(&fileHandler);
+    ShopController controller(&networkHandler);
 
     engine.rootContext()->setContextProperty("shopController", &controller);
     engine.rootContext()->setContextProperty("shopModel", controller.getShopModel());
