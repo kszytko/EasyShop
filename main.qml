@@ -1,4 +1,4 @@
-import QtQuick 2.6
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
@@ -7,7 +7,7 @@ ApplicationWindow {
   width: 450
   height: 480
   visible: true
-  title: qsTr("Hello World")
+  title: qsTr("Shop")
 
   header: ToolBar {
     id: toolBar
@@ -16,7 +16,7 @@ ApplicationWindow {
       anchors.fill: parent
 
       ToolButton {
-        text: qsTr("Lista produktów")
+        text: qsTr("Product list")
         icon.source: "qrc:/list.png"
         onClicked: pageLoader.source = "ShopScreen.qml"
       }
@@ -25,7 +25,7 @@ ApplicationWindow {
 
       ToolButton {
         id: basketToolButton
-        text: qsTr("Koszyk zakupów")
+        text: qsTr("Basket")
         icon.source: "qrc:/basket.png"
         onClicked: pageLoader.source = "BasketScreen.qml"
       }
@@ -35,7 +35,6 @@ ApplicationWindow {
       }
 
       ToolButton {
-        //text: qsTr("Opcje")
         icon.source: "qrc:/options.png"
         onClicked: pageLoader.source = "SettingsScreen.qml"
       }

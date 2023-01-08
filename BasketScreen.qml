@@ -1,4 +1,4 @@
-import QtQuick 2.6
+import QtQuick 2.15
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.3
 
@@ -9,9 +9,37 @@ Rectangle {
 
   ListView {
     id: basketView
-    anchors.fill: parent
+    width: parent.width
+    height: parent.height - footer.height
+
+    clip: true
 
     model: basketModel
+
+    header: RowLayout {
+      Layout.fillWidth: true
+      spacing: 15
+
+      Text {
+        text: qsTr("Name")
+        Layout.preferredWidth: 80
+      }
+
+      Text {
+        text: qsTr("Amount")
+        Layout.preferredWidth: 80
+      }
+
+      Text {
+        text: qsTr("Price")
+        Layout.preferredWidth: 80
+      }
+
+      Text {
+        text: qsTr("Full Price")
+        Layout.fillWidth: true
+      }
+    }
 
     delegate: ColumnLayout {
       width: basketView.width
@@ -23,81 +51,45 @@ Rectangle {
 
         Text {
           text: model.name
-          Layout.fillWidth: true
-          Layout.maximumWidth: 80
+          Layout.preferredWidth: 80
         }
 
         Text {
           text: model.amount
-          Layout.fillWidth: true
-          Layout.maximumWidth: 80
+          Layout.preferredWidth: 80
         }
 
         Text {
-          text: model.price
-          Layout.fillWidth: true
-          Layout.maximumWidth: 80
+          text: Number(model.price / 100).toLocaleCurrencyString(
+                  Qt.locale("pl_PL"))
+          Layout.preferredWidth: 80
         }
 
         Text {
-          text: model.price * model.amount
+          text: Number(model.price * model.amount / 100).toLocaleCurrencyString(
+                  Qt.locale("pl_PL"))
           Layout.fillWidth: true
-          Layout.maximumWidth: 80
         }
 
         RoundButton {
-          text: "DELETE"
+          text: qsTr("DELETE")
+          height: parent.height
           onClicked: {
             shopController.removeFromBasket(model.index)
           }
-          height: parent.height
         }
       }
+
       Rectangle {
         color: "#666"
         height: 1
         Layout.fillWidth: true
       }
     }
-
-    header: RowLayout {
-      Layout.fillWidth: true
-      spacing: 15
-
-      Text {
-        text: "Name"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-      }
-
-      Text {
-        text: "Amount"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-      }
-
-      Text {
-        text: "Price"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-      }
-
-      Text {
-        text: "Full Price"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-      }
-
-      Text {
-        text: ""
-        Layout.fillWidth: true
-        Layout.minimumWidth: 80
-      }
-    }
   }
 
   RowLayout {
-    id: footerTotal
+    id: footer
     anchors.bottom: parent.bottom
     width: parent.width
     height: 50
@@ -111,13 +103,15 @@ Rectangle {
     }
 
     RoundButton {
-      text: "BUY"
-      implicitWidth: 100
+      text: qsTr("MAKE ORDER")
+      Layout.preferredWidth: 100
       Layout.alignment: Qt.AlignCenter
 
       onClicked: {
-        shopController.buy()
-        popup.open()
+        if (basketView.count > 0) {
+          shopController.makeOrder()
+          popup.open()
+        }
       }
     }
   }
@@ -145,20 +139,17 @@ Rectangle {
       spacing: 10
 
       Text {
-        text: "ORDER"
+        text: qsTr("ORDER")
         Layout.alignment: Qt.AlignHCenter
       }
 
       Text {
-        text: shopController.orderPrice === 0 ? "Error" : Number(
-                                                  shopController.orderPrice
-                                                  / 100).toLocaleCurrencyString(
-                                                  Qt.locale("pl_PL"))
+        text: shopController.orderInfo
         Layout.alignment: Qt.AlignHCenter
       }
 
       RoundButton {
-        text: "Close"
+        text: qsTr("OK")
         Layout.alignment: Qt.AlignHCenter
         implicitWidth: 100
         onClicked: popup.close()

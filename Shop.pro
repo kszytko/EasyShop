@@ -8,7 +8,6 @@ CONFIG += c++17
 
 SOURCES += \
         basketmodel.cpp \
-        filehandler.cpp \
         main.cpp \
         networkhandler.cpp \
         parser.cpp \
@@ -31,8 +30,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     basketmodel.h \
-    datahandler.h \
-    filehandler.h \
     networkhandler.h \
     parser.h \
     product.h \
