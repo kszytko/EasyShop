@@ -7,13 +7,13 @@ QT += quick
 CONFIG += c++17
 
 SOURCES += \
-        basketmodel.cpp \
         main.cpp \
-        networkhandler.cpp \
-        parser.cpp \
-        product.cpp \
-        shopcontroller.cpp \
-        shopmodel.cpp
+        controllers/shopcontroller.cpp \
+        controllers/networkhandler.cpp \
+        controllers/parser.cpp \
+        controllers/product.cpp \
+        controllers/basketmodel.cpp \
+        controllers/shopmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -29,9 +29,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    basketmodel.h \
-    networkhandler.h \
-    parser.h \
-    product.h \
-    shopcontroller.h \
-    shopmodel.h
+        controllers/shopcontroller.h \
+        controllers/networkhandler.h \
+        controllers/parser.h \
+        controllers/product.h \
+        controllers/basketmodel.h \
+        controllers/shopmodel.h

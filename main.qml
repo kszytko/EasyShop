@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.3
 
+import "ui"
+
 ApplicationWindow {
   id: root
   width: 450
@@ -17,8 +19,8 @@ ApplicationWindow {
 
       ToolButton {
         text: qsTr("Product list")
-        icon.source: "qrc:/list.png"
-        onClicked: pageLoader.source = "ShopScreen.qml"
+        icon.source: "qrc:/ui/icons/list.png"
+        onClicked: pageLoader.source = "ui/ShopScreen.qml"
       }
 
       NewToolSeparator {}
@@ -26,8 +28,8 @@ ApplicationWindow {
       ToolButton {
         id: basketToolButton
         text: qsTr("Basket")
-        icon.source: "qrc:/basket.png"
-        onClicked: pageLoader.source = "BasketScreen.qml"
+        icon.source: "qrc:/ui/icons/basket.png"
+        onClicked: pageLoader.source = "ui/BasketScreen.qml"
       }
 
       Item {
@@ -35,8 +37,8 @@ ApplicationWindow {
       }
 
       ToolButton {
-        icon.source: "qrc:/options.png"
-        onClicked: pageLoader.source = "SettingsScreen.qml"
+        icon.source: "qrc:/ui/icons/options.png"
+        onClicked: pageLoader.source = "ui/SettingsScreen.qml"
       }
     }
   }
@@ -48,7 +50,7 @@ ApplicationWindow {
     Loader {
       id: pageLoader
       anchors.fill: parent
-      source: "./ShopScreen.qml"
+      source: "./ui/ShopScreen.qml"
     }
   }
 }
