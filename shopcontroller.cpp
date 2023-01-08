@@ -2,36 +2,48 @@
 #include "parser.h"
 
 #include <QDebug>
+#include <QLocale>
+#include <QMetaEnum>
 
-ShopController::ShopController(DataHandler * handler, QObject *parent)
-    : QObject{parent}, m_dataHandler(handler)
+ShopController::ShopController(QObject *parent)
+    : QObject{parent}, m_adress(DEFAULT_ADRESS)
 {
     m_shopModel = new ShopModel();
     m_basketModel = new BasketModel();
 
-    qDebug() << connect(m_dataHandler, &DataHandler::finishedGET, this, &ShopController::readProducts);
-    qDebug() << connect(m_dataHandler, &DataHandler::finishedPOST, this, &ShopController::readOrder);
+    m_orderHandler = new NetworkHandler(m_adress, ORDER_PATH, ENCODING_FORM);
+    m_shopListHandler = new NetworkHandler(m_adress, SHOPLIST_PATH, ENCODING_JSON);
+
+    connect(m_orderHandler, &NetworkHandler::finished, this, &ShopController::readOrder);
+    connect(m_shopListHandler, &NetworkHandler::finished, this, &ShopController::readProducts);
+
+    connect(m_orderHandler, &NetworkHandler::errorOccurred, this, &ShopController::errorOrder);
+    connect(m_shopListHandler, &NetworkHandler::errorOccurred, this, &ShopController::errorShopList);
+
+    connect(this, &ShopController::adressChanged, this, &ShopController::updateHandlersUrls);
+
 }
 
 void ShopController::addToBasket(qsizetype index)
 {
-    qDebug() << "Adding: " << index;
     m_basketModel->add(m_shopModel->getProduct(index));
-    qDebug() << "Added: " << index;
 }
 
 void ShopController::removeFromBasket(qsizetype index)
 {
-    qDebug() << "Removing: " << index;
     m_basketModel->remove(index);
-    qDebug() << "Removed: " << index;
 }
 
-void ShopController::buy()
+void ShopController::makeOrder()
 {
-    qDebug() << "BUY ALL";
+    m_orderHandler->send(m_basketModel->totalPrice());
+}
 
-    m_dataHandler->postOrder(m_basketModel->totalPrice());
+void ShopController::refreshShopList()
+{
+    setShopListInfo(QString());
+    m_shopModel->clear();
+    m_shopListHandler->receive();
 }
 
 ShopModel *ShopController::getShopModel(){
@@ -45,36 +57,43 @@ BasketModel *ShopController::getBasketModel()
 
 void ShopController::readProducts()
 {
-    qDebug() << "ReadProducts";
-    Parser parser(m_dataHandler->getResult());
+    Parser parser(m_shopListHandler->getData());
     m_shopModel->populate(parser.getProducts());
+
+    setShopListInfo(QString("Valid"));
 }
 
 void ShopController::readOrder()
 {
-    qDebug() << "ReadOrder";
-    auto result = m_dataHandler->getResult();
+    auto result = m_orderHandler->getData();
+
     if(!result.isEmpty()){
-        setOrderPrice(result.toInt());
+        auto value = result.toDouble();
+        const QString info{QLocale("pl_PL").toCurrencyString(value / 100)};
+
+        setOrderInfo(info);
         m_basketModel->clear();
-    } else {
-        setOrderPrice(0);
-    }
+    };
 }
 
-
-int ShopController::orderPrice() const
+void ShopController::errorOrder(const QString & error)
 {
-    return m_orderPrice;
+    QString info{"Error: " + error};
+    setOrderInfo(info);
 }
 
-void ShopController::setOrderPrice(int newOrderPrice)
+void ShopController::errorShopList(const QString & error)
 {
-    if (m_orderPrice == newOrderPrice)
-        return;
-    m_orderPrice = newOrderPrice;
-    emit orderPriceChanged();
+    QString info{"Error: " + error};
+    setShopListInfo(info);
 }
+
+void ShopController::updateHandlersUrls()
+{
+    m_orderHandler->setAdress(m_adress);
+    m_shopListHandler->setAdress(m_adress);
+}
+
 
 QString ShopController::adress() const
 {
@@ -87,4 +106,30 @@ void ShopController::setAdress(const QString &newAdress)
         return;
     m_adress = newAdress;
     emit adressChanged();
+}
+
+QString ShopController::orderInfo() const
+{
+    return m_orderInfo;
+}
+
+void ShopController::setOrderInfo(const QString &newOrderInfo)
+{
+    if (m_orderInfo == newOrderInfo)
+        return;
+    m_orderInfo = newOrderInfo;
+    emit orderInfoChanged();
+}
+
+QString ShopController::shopListInfo() const
+{
+    return m_shopListInfo;
+}
+
+void ShopController::setShopListInfo(const QString &newShopListInfo)
+{
+    if (m_shopListInfo == newShopListInfo)
+        return;
+    m_shopListInfo = newShopListInfo;
+    emit shopListInfoChanged();
 }

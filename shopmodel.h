@@ -23,6 +23,8 @@ public:
     void populate(const QProductList & products);
     Product * getProduct(qsizetype index);
 
+    void clear();
+
 private:
     QProductList m_products;
 

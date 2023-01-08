@@ -1,21 +1,19 @@
 #include "networkhandler.h"
+#include <QMetaEnum>
 
-
-NetworkHandler::NetworkHandler(QString url, QString productEndpoint, QString orderEndpoint, QObject *parent)
-    : DataHandler{parent}, m_url(url)
+NetworkHandler::NetworkHandler(QString url, QString path, QString encoding, QObject *parent)
+    : QObject{parent}
 {
-    m_networkAccessManager = std::make_unique<QNetworkAccessManager>( this );
+    m_networkAccessManager = new QNetworkAccessManager(parent);
 
-    m_productsEndpoint.setScheme("http");
-    m_productsEndpoint.setAuthority(m_url);
-    m_productsEndpoint.setPath(productEndpoint);
+    m_url.setScheme("http");
+    m_url.setAuthority(url);
+    m_url.setPath(path);
 
-    m_orderEndpoint.setScheme("http");
-    m_orderEndpoint.setAuthority(m_url);
-    m_orderEndpoint.setPath(orderEndpoint);
+    m_request.setUrl(m_url);
+    m_request.setHeader( QNetworkRequest::ContentTypeHeader, encoding);
 
-
-    connect(this, &NetworkHandler::urlChanged, this, &NetworkHandler::updateEndpoints);
+    m_timer.setSingleShot(true);
 }
 
 NetworkHandler::~NetworkHandler()
@@ -23,55 +21,47 @@ NetworkHandler::~NetworkHandler()
     m_networkAccessManager->deleteLater();
 }
 
-void NetworkHandler::getProducts()
+void NetworkHandler::receive()
 {
-    performGET(m_productsEndpoint);
+    performGET();
 }
 
-void NetworkHandler::postOrder(int totalPrice)
+void NetworkHandler::send(int value)
 {
-    QByteArray byteData = QString::number(totalPrice).toUtf8();
-    performPOST(m_orderEndpoint, byteData);
+    QByteArray data{"value=" + QString::number(value).toUtf8()};
+    performPOST(data);
 }
 
-QByteArray NetworkHandler::getResult()
+void NetworkHandler::performGET()
+{
+    m_timer.start(TIMEOUT);
+    m_networkReply = m_networkAccessManager->get(m_request);
+    connectNetworkReply();
+}
+
+void NetworkHandler::performPOST(const QByteArray & data)
+{
+    m_timer.start(TIMEOUT);
+    m_networkReply = m_networkAccessManager->post(m_request, data);
+    connectNetworkReply();
+}
+
+void NetworkHandler::connectNetworkReply()
+{
+    connect(m_networkReply, &QNetworkReply::finished, this, &NetworkHandler::networkReplyReadyRead);
+    connect(m_networkReply, &QNetworkReply::errorOccurred, this, &NetworkHandler::networkError);
+    connect(&m_timer, &QTimer::timeout, this, &NetworkHandler::timeoutError);
+}
+
+QByteArray NetworkHandler::getData()
 {
     return m_response;
 }
 
-void NetworkHandler::performGET(const QUrl & url)
+void NetworkHandler::setAdress(QString adress)
 {
-    QNetworkRequest request;
-    request.setUrl(url);
-    request.setHeader( QNetworkRequest::ContentTypeHeader, QString( "application/json"));
-
-    m_networkReply = std::shared_ptr<QNetworkReply>(m_networkAccessManager->get(request));
-    connect(m_networkReply.get(), &QNetworkReply::finished, this, &NetworkHandler::networkReplyReadyReadGET);
-
-    qDebug() << "Perform get:" << url.toDisplayString();
-}
-
-void NetworkHandler::performPOST(const QUrl & url, const QByteArray & data)
-{
-    QNetworkRequest request(url);
-    request.setHeader( QNetworkRequest::ContentTypeHeader, QString( "application/json"));
-
-    m_networkReply = std::shared_ptr<QNetworkReply>(m_networkAccessManager->post(request, data));
-    connect(m_networkReply.get(), &QNetworkReply::finished, this, &NetworkHandler::networkReplyReadyReadPOST);
-}
-
-void NetworkHandler::networkReplyReadyReadGET()
-{
-    qDebug() << "Read Get";
-    networkReplyReadyRead();
-    emit finishedGET();
-}
-
-void NetworkHandler::networkReplyReadyReadPOST()
-{
-    qDebug() << "Read Post";
-    networkReplyReadyRead();
-    emit finishedPOST();
+    m_url.setAuthority(adress);
+    m_request.setUrl(m_url);
 }
 
 void NetworkHandler::networkReplyReadyRead()
@@ -82,23 +72,20 @@ void NetworkHandler::networkReplyReadyRead()
 
     m_response = m_networkReply->readAll();
     m_networkReply->deleteLater();
+
+    m_timer.stop();
+    emit finished();
 }
 
-void NetworkHandler::updateEndpoints()
+void NetworkHandler::networkError(QNetworkReply::NetworkError code)
 {
-    m_productsEndpoint.setAuthority(m_url);
-    m_orderEndpoint.setAuthority(m_url);
+    Q_UNUSED(code);
+    m_timer.stop();    
+    emit errorOccurred(m_networkReply->errorString());
 }
 
-QString NetworkHandler::url() const
+void NetworkHandler::timeoutError()
 {
-    return m_url;
-}
-
-void NetworkHandler::setUrl(const QString &newUrl)
-{
-    if (m_url == newUrl)
-        return;
-    m_url = newUrl;
-    emit urlChanged();
+    m_networkReply->abort();
+    emit errorOccurred(QString("Timeout"));
 }

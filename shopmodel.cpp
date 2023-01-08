@@ -53,3 +53,10 @@ Product * ShopModel::getProduct(qsizetype index)
 {
     return &m_products[index];
 }
+
+void ShopModel::clear()
+{
+    beginRemoveRows(QModelIndex(), 0, m_products.size());
+    m_products.clear();
+    endRemoveRows();
+}

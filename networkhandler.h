@@ -5,50 +5,52 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QTimer>
 
-#include "datahandler.h"
+constexpr int TIMEOUT{5000};
+const QString ENCODING_JSON{"application/json"};
+const QString ENCODING_FORM{"application/x-www-form-urlencoded"};
 
-class NetworkHandler : public DataHandler
+
+class NetworkHandler : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged);
 
 public:
-    explicit NetworkHandler(QString url, QString productEndpoint, QString orderEndpoint, QObject *parent = nullptr);
-    ~NetworkHandler() override;
+    explicit NetworkHandler(QString url, QString path, QString encoding, QObject *parent = nullptr);
+    ~NetworkHandler();
 
-    void getProducts() override;
-    void postOrder(int totalPrice) override;
+    void receive();
+    void send(int value);
+    QByteArray getData();
 
-    QByteArray getResult() override;
+    void setAdress(QString adress);
 
-    QString url() const;
-    void setUrl(const QString &newUrl);
-
-
-public slots:
-    void updateEndpoints();
+    QString errorToString(QNetworkReply::NetworkError code);
+    
+signals:
+    void finished();
+    void errorOccurred(const QString & error);
 
 private slots:
-    void networkReplyReadyReadGET();
-    void networkReplyReadyReadPOST();
-
-signals:
-    void urlChanged();
+    void networkReplyReadyRead();
+    void networkError(QNetworkReply::NetworkError code);
+    void timeoutError();
 
 private:
-    void performGET(const QUrl & url);
-    void performPOST(const QUrl & url, const QByteArray & data);
-    void networkReplyReadyRead();
+    void performGET();
+    void performPOST(const QByteArray & data);
+    void connectNetworkReply();
 
-    std::unique_ptr<QNetworkAccessManager> m_networkAccessManager;
-    std::shared_ptr<QNetworkReply> m_networkReply;
+private:
+    QNetworkAccessManager * m_networkAccessManager;
+    QNetworkReply * m_networkReply;
 
+    QUrl m_url;
+    QNetworkRequest m_request;
     QByteArray m_response;
 
-    QString m_url;
-    QUrl m_productsEndpoint;
-    QUrl m_orderEndpoint;
+    QTimer m_timer;
 };
 
 #endif // NETWORKHANDLER_H
